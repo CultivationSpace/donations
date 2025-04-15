@@ -1,5 +1,5 @@
 
-interface Entry {
+export interface Entry {
 	label: string;
 	column: number;
 	donors: number;
