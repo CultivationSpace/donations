@@ -1,0 +1,13 @@
+{
+  "name": "donation",
+  "version": "1.0.0",
+  "scripts": {
+    "server": "http-server --port 0 -o --silent -c-1 web"
+  },
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
