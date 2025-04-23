@@ -105,7 +105,7 @@ function drawColumnChart(query, data) {
 		.domain([0, 2000])
 		.range([y0, y1]);
 
-	const yAxis = d3.axisLeft(y).tickFormat(v => Math.round(v.valueOf()) + ' €').ticks(5);
+	const yAxis = d3.axisLeft(y).tickFormat(v => formatCurrency(v.valueOf())).ticks(5);
 
 	svg.append('g')
 		.style('font-size', '14px')
@@ -177,7 +177,7 @@ function drawProjectionChart(query, data) {
 		.domain([0, 20000])
 		.range([y0, y1]);
 
-	const yAxis = d3.axisLeft(y).tickFormat(v => Math.round(v.valueOf()) + ' €').ticks(5);
+	const yAxis = d3.axisLeft(y).tickFormat(v => formatCurrency(v.valueOf())).ticks(5);
 
 	svg.append('g')
 		.style('font-size', '14px')
@@ -216,5 +216,44 @@ function drawProjectionChart(query, data) {
 				.y((d) => y(d.sumDonated))
 		);
 
+	const sumProjectedDonations = data[data.length - 1].sumProjectedDonations;
+	const sumNeeded = data[data.length - 1].sumNeeded;
+	const difference = sumProjectedDonations - sumNeeded;
+
+	if (difference < 0) {
+		const yp = y(sumProjectedDonations);
+		const yn = y(sumNeeded);
+		const xa = x1 - b * 0.3;
+		const xm = xa + 5;
+
+		const path = d3.line()([[xa, yn], [xm, yn], [xm, yp], [xa, yp]]);
+		console.log(path);
+
+		svg.append('path')
+			.attr('d', path)
+			.attr('fill', 'none')
+			.attr('stroke', '#000')
+			.attr('stroke-width', 1.5)
+
+		svg.append('text')
+			.attr('x', xm)
+			.attr('y', (yp + yn) / 2)
+			.attr('dy', '1em')
+			.attr('dx', '-0.2em')
+			.attr('text-anchor', 'end')
+			.text(formatCurrency(difference))
+			.attr('font-weight', 'bold')
+			.attr('font-size', '2em')
+			.attr('fill', colorRed);
+
+	}
+
 	container.append(svg.node());
+}
+
+function formatCurrency(value) {
+	let text = value.toFixed(0);
+	// add thousand separator
+	text = text.replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+	return text + ' €';
 }
