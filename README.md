@@ -5,10 +5,12 @@ A simple static web application that processes donation data from a [donations.t
 ## Installation
 
 Requirements:
+
 - [Node.js](https://nodejs.org/) (LTS version recommended)
 - [npm](https://www.npmjs.com/) (included with Node.js)
 
 Clone the repository and install dependencies:
+
 ```bash
 git clone https://github.com/cultivationspace/donations.git
 cd donations
