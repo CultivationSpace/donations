@@ -1,8 +1,23 @@
-// Define color constants for the charts
+/**
+ * @fileoverview Donation Dashboard renderer.
+ *
+ * Loads donation data from a TSV file and renders two interactive
+ * D3.js charts:
+ *  • Column chart – compares monthly donations (green) with
+ *    monthly needs (red).
+ *  • Projection chart – shows cumulative totals, projected year‑end
+ *    donations, and highlights any funding shortfall.
+ *
+ * Runs directly in the browser via `<script type="module">`; no build
+ * tooling required.
+ */
+
+/** Primary alert color – used for “needed” amounts. */
 export const colorRed = '#AD4848'
+/** Primary positive color – used for “donated” amounts. */
 export const colorGreen = '#48AD9C'
 
-// Month abbreviations for quick lookup
+/** Month abbreviations for fast numeric‑to‑label mapping. */
 export const monthLabels = [
 	'Jan',
 	'Feb',
@@ -16,16 +31,37 @@ export const monthLabels = [
 	'Oct',
 	'Nov',
 	'Dec',
-]
+];
 
-// Immediately invoked async function to load data and draw charts
-;(async () => {
+/**
+ * Entry point – asynchronous IIFE (Immediately Invoked Function
+ * Expression) so we can use `await` at the top level in plain
+ * browsers. It loads the TSV data and renders both charts.
+ */
+(async () => {
 	const data = await loadData('donations.tsv') // Load data from a TSV file
 	drawColumnChart('#column_chart', data) // Draw the column chart
 	drawProjectionChart('#projection_chart', data) // Draw the projection chart
-})()
+})();
 
-// Function to load and process data from a TSV file
+/**
+ * Load donation data from a TSV file and enrich each row with
+ * cumulative sums and simple year‑end projections.
+ *
+ * @param {string} file  Relative path to the `.tsv` file.
+ * @returns {Promise<ProcessedEntry[]>}
+ *
+ * @typedef {Object} ProcessedEntry
+ * @property {string}  label                    Month label (e.g. 'Jan').
+ * @property {number}  column                   Zero‑based sequential index.
+ * @property {number}  donors                   Donor count that month.
+ * @property {number}  donated                  Amount donated that month (€).
+ * @property {number}  needed                   Required amount that month (€).
+ * @property {boolean} hasDonation              Whether the month has any donation.
+ * @property {number}  sumDonated               Cumulative donations up to month.
+ * @property {number}  sumNeeded                Cumulative needs up to month.
+ * @property {?number} sumProjectedDonations    Projected cumulative donations.
+ */
 async function loadData(file) {
 	let data
 	try {
@@ -90,7 +126,13 @@ async function loadData(file) {
 	return entries // Return processed entries
 }
 
-// Function to draw a column chart
+/**
+ * Render a grouped column chart comparing monthly donations
+ * (green) against monthly needs (red).
+ *
+ * @param {string}           query  CSS selector of the container element.
+ * @param {ProcessedEntry[]} data   Enriched dataset returned by loadData().
+ */
 function drawColumnChart(query, data) {
 	const margin = { left: 60, right: 10, top: 20, bottom: 30 } // Chart margins
 
@@ -151,7 +193,7 @@ function drawColumnChart(query, data) {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => x(d.label) + b * 0.3)
+		.attr('x', (d) => x(d.label) + b * 0.25)
 		.attr('y', (d) => y(d.needed))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.needed))
@@ -162,7 +204,7 @@ function drawColumnChart(query, data) {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => x(d.label) + b * 0.1)
+		.attr('x', (d) => x(d.label) + b * 0.15)
 		.attr('y', (d) => y(d.donated))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.donated))
@@ -172,7 +214,18 @@ function drawColumnChart(query, data) {
 	container.append(svg.node())
 }
 
-// Function to draw a projection chart
+/**
+ * Render a line chart with three series:
+ *   1. Cumulative needs (red solid)
+ *   2. Cumulative donations (green solid)
+ *   3. Projected cumulative donations (green dashed)
+ *
+ * If the projection falls short, the chart draws an annotation box
+ * indicating the shortfall amount.
+ *
+ * @param {string}           query  CSS selector of the container element.
+ * @param {ProcessedEntry[]} data   Enriched dataset returned by loadData().
+ */
 function drawProjectionChart(query, data) {
 	const margin = { left: 70, right: 10, top: 20, bottom: 30 } // Chart margins
 
@@ -313,7 +366,14 @@ function drawProjectionChart(query, data) {
 	container.append(svg.node())
 }
 
-// Function to format currency values
+/**
+ * Format a number as Euro currency with thousands separators and a
+ * trailing " €". A minimalist helper to avoid bringing in Intl for
+ * this demo.
+ *
+ * @param {number} value
+ * @returns {string}
+ */
 function formatCurrency(value) {
 	return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
 }
