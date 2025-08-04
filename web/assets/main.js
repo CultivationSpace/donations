@@ -44,38 +44,45 @@ async function loadData(file) {
 			case 12: label = 'Dec'; break;
 		}
 
+		let column = (year - 2020) * 12 + month - 1; // Calculate column index
+		let donors = parseInt(entry.donors, 10); // Parse donors as integer
+		let donated = parseFloat(entry.donated); // Parse donated amount as float
+		let needed = parseFloat(entry.needed); // Parse needed amount as float
+
 		// Return a processed entry object
 		return {
 			label,
-			column: (year - 2020) * 12 + month - 1, // Calculate column index
-			donors: parseInt(entry.donors, 10), // Parse donors as integer
-			donated: parseFloat(entry.donated), // Parse donated amount as float
-			needed: parseFloat(entry.needed), // Parse needed amount as float
+			column,
+			donors,
+			donated,
+			needed,
+			hasDonation: entry.donated > 0 // Flag if donation exists
 		};
 	});
 
 	// Sort entries by column index
 	entries.sort((a, b) => a.column - b.column);
 
-	// Calculate total donations and average donations
-	const totalDonated = entries.reduce((acc, entry) => acc + entry.donated, 0);
-	const countDonationMonths = entries.reduce((acc, entry) => acc + (entry.donated ? 1 : 0), 0);
-	const avgDonated = totalDonated / countDonationMonths;
+	// Calculate average donations based on the last 3 months
+	const lastThreeMonths = entries.filter(e => e.hasDonation).slice(-3); // Get the last 3 months of data
+	const avgDonated = lastThreeMonths.reduce((acc, entry) => acc + entry.donated, 0) / lastThreeMonths.length;
+	// month starting the projection
+	const projectionStartEntry = lastThreeMonths[lastThreeMonths.length - 1];
 
 	// Add cumulative and projected data to each entry
-	let sumProjectedDonations = 0;
 	let sumDonated = 0;
 	let sumNeeded = 0;
-	entries.forEach((entry, i) => {
-		sumProjectedDonations += avgDonated; // Cumulative projected donations
-		sumDonated += entry.donated; // Cumulative donated amount
-		sumNeeded += entry.needed; // Cumulative needed amount
-
-		entry.sumProjectedDonations = sumProjectedDonations;
+	entries.forEach((entry) => {
+		sumDonated += entry.donated ?? 0; // Cumulative donated amount
+		sumNeeded += entry.needed ?? 0; // Cumulative needed amount
 		entry.sumDonated = sumDonated;
-		entry.hasDonation = entry.donated > 0; // Flag if donation exists
 		entry.sumNeeded = sumNeeded;
+
+		if (entry.column >= projectionStartEntry.column) {
+			entry.sumProjectedDonations = sumDonated + avgDonated * (entry.column - projectionStartEntry.column); // Projected donations
+		}
 	});
+
 
 	return entries; // Return processed entries
 }
@@ -222,7 +229,7 @@ function drawProjectionChart(query, data) {
 
 	// Add dashed line for "projected donations"
 	svg.append('path')
-		.datum(data)
+		.datum(data.filter(d => d.sumProjectedDonations))
 		.attr('fill', 'none')
 		.attr('stroke', colorGreen)
 		.attr('stroke-width', 3)
