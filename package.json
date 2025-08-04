@@ -1,14 +1,22 @@
 {
-  "name": "donation",
+  "name": "cultivation-space-donations",
   "version": "1.0.0",
   "scripts": {
-    "server": "http-server --port 0 -o --silent -c-1 web"
+    "format": "prettier --write .",
+    "server": "http-server --port 8080 -o --silent -c-1 web",
+    "start": "npm run server"
   },
-  "author": "",
+  "private": true,
+  "author": "Michael Kreil",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CultivationSpace/donations.git"
+  },
   "license": "MIT",
-  "description": "",
+  "description": "Static D3 dashboard for Cultivation Space donations",
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "prettier": "^3.6.2"
   },
   "prettier": {
     "singleQuote": true,
