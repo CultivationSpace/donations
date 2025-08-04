@@ -2,6 +2,22 @@
 export const colorRed = '#AD4848'
 export const colorGreen = '#48AD9C'
 
+// Month abbreviations for quick lookup
+export const monthLabels = [
+	'Jan',
+	'Feb',
+	'Mar',
+	'Apr',
+	'May',
+	'Jun',
+	'Jul',
+	'Aug',
+	'Sep',
+	'Oct',
+	'Nov',
+	'Dec',
+]
+
 // Immediately invoked async function to load data and draw charts
 ;(async () => {
 	const data = await loadData('donations.tsv') // Load data from a TSV file
@@ -27,51 +43,13 @@ async function loadData(file) {
 		const year = parseInt(date[0], 10)
 		const month = parseInt(date[1], 10)
 
-		// Convert month number to a short label
-		let label = ''
-		switch (month) {
-			case 1:
-				label = 'Jan'
-				break
-			case 2:
-				label = 'Feb'
-				break
-			case 3:
-				label = 'Mar'
-				break
-			case 4:
-				label = 'Apr'
-				break
-			case 5:
-				label = 'May'
-				break
-			case 6:
-				label = 'Jun'
-				break
-			case 7:
-				label = 'Jul'
-				break
-			case 8:
-				label = 'Aug'
-				break
-			case 9:
-				label = 'Sep'
-				break
-			case 10:
-				label = 'Oct'
-				break
-			case 11:
-				label = 'Nov'
-				break
-			case 12:
-				label = 'Dec'
-				break
-		}
+		// Convert month number (1‑12) to short label
+		const label = monthLabels[month - 1] ?? `${month}`
 
 		let column = (year - 2020) * 12 + month - 1 // Calculate column index
-		let donors = parseInt(entry.donors, 10) // Parse donors as integer
-		let donated = parseFloat(entry.donated) // Parse donated amount as float
-		let needed = parseFloat(entry.needed) // Parse needed amount as float
+		const donors = parseInt(entry.donors, 10) // Parse donors as integer
+		const donated = parseFloat(entry.donated) // Parse donated amount as float
+		const needed = parseFloat(entry.needed) // Parse needed amount as float
 
 		// Return a processed entry object
 		return {
@@ -152,10 +130,10 @@ function drawColumnChart(query, data) {
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
-	// Define y-axis scale and axis
+	const maxY = d3.max(data, (d) => Math.max(d.donated, d.needed)) ?? 0
 	const y = d3
 		.scaleLinear()
-		.domain([0, 2000]) // Fixed range for y-axis
+		.domain([0, maxY * 1.1]) // Dynamic range based on data (+10% headroom)
 		.range([y0, y1])
 
 	const yAxis = d3
@@ -234,10 +212,10 @@ function drawProjectionChart(query, data) {
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
-	// Define y-axis scale and axis
+	const maxY = d3.max(data, (d) => Math.max(d.sumNeeded, d.sumProjectedDonations ?? 0)) ?? 0
 	const y = d3
 		.scaleLinear()
-		.domain([0, 20000]) // Fixed range for y-axis
+		.domain([0, maxY * 1.1]) // Dynamic range (+10% headroom)
 		.range([y0, y1])
 
 	const yAxis = d3
