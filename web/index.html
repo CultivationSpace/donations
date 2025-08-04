@@ -3,6 +3,10 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Interactive dashboard visualising donations and expenses for Cultivation Space."
+		/>
 		<title>Donation Dashboard</title>
 		<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 		<script src="assets/main.js" async type="module"></script>
@@ -58,20 +62,34 @@
 			<h1>Donation Dashboard</h1>
 		</header>
 		<main>
-			<h2>Total Donations Collected</h2>
-			<p>
-				The green bar represents the total donations collected so far,<br />
-				while the red bar indicates our monthly expenses.
-			</p>
-			<div class="chart" id="column_chart"></div>
+			<section aria-labelledby="total-donations-heading">
+				<h2 id="total-donations-heading">Total Donations Collected</h2>
+				<p>
+					The green bar represents the total donations collected so far,<br />
+					while the red bar indicates our monthly expenses.
+				</p>
+				<div
+					class="chart"
+					id="column_chart"
+					role="img"
+					aria-label="Total donations versus monthly expenses bar chart"
+				></div>
+			</section>
 
-			<h2>Year-End Donation Projection</h2>
-			<p>
-				The red line represents the cumulative expenses for the year.<br />
-				The solid green line shows the cumulative donations collected so far,<br />
-				and the dotted green line projects the total donations by the end of the year.
-			</p>
-			<div class="chart" id="projection_chart"></div>
+			<section aria-labelledby="projection-heading">
+				<h2 id="projection-heading">Year-End Donation Projection</h2>
+				<p>
+					The red line represents the cumulative expenses for the year.<br />
+					The solid green line shows the cumulative donations collected so far,<br />
+					and the dotted green line projects the total donations by the end of the year.
+				</p>
+				<div
+					class="chart"
+					id="projection_chart"
+					role="img"
+					aria-label="Year-end donation projection line chart"
+				></div>
+			</section>
 		</main>
 		<footer>
 			<p>&copy; Cultivation Space</p>
