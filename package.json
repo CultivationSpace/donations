@@ -2,7 +2,7 @@
   "name": "cultivation-space-donations",
   "version": "1.0.0",
   "scripts": {
-    "format": "prettier --write .",
+    "format": "prettier --write web/**/*.js web/**/*.html",
     "server": "http-server --port 8080 -o --silent -c-1 web",
     "start": "npm run server"
   },
