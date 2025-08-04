@@ -1,82 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Donation Dashboard</title>
+		<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+		<script src="assets/main.js" async type="module"></script>
+		<style>
+			body {
+				font-family: sans-serif;
+				margin: 0px;
+				color: #1f2937;
+			}
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Donation Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="assets/main.js" async type="module"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0px;
-      color: #1F2937;
-    }
+			header {
+				padding: 10px 0;
+				text-align: center;
+			}
 
-    header {
-      padding: 10px 0;
-      text-align: center;
-    }
+			h1,
+			h2 {
+				font-weight: 600;
+				letter-spacing: -0.025em;
+			}
 
-    h1,
-    h2 {
-      font-weight: 600;
-      letter-spacing: -0.025em
-    }
+			h1 {
+				margin: 5rem 0;
+				color: #109786;
+			}
 
-    h1 {
-      margin: 5rem 0;
-      color: #109786;
-    }
+			h2 {
+				margin: 5rem 0 1rem;
+			}
 
-    h2 {
-      margin: 5rem 0 1rem;
-    }
+			main {
+				text-align: center;
+			}
 
-    main {
-      text-align: center;
-    }
+			main .chart {
+				width: 800px;
+				height: 500px;
+				margin: 1rem auto 3rem;
+			}
 
-    main .chart {
-      width: 800px;
-      height: 500px;
-      margin: 1rem auto 3rem;
-    }
+			footer {
+				margin-top: 5rem;
+				text-align: center;
+				padding: 10px 0;
+				background-color: #67ead1;
+				color: #000;
+			}
+		</style>
+	</head>
 
-    footer {
-      margin-top: 5rem;
-      text-align: center;
-      padding: 10px 0;
-      background-color: #67EAD1;
-      color: #000;
-    }
-  </style>
-</head>
+	<body>
+		<header>
+			<h1>Donation Dashboard</h1>
+		</header>
+		<main>
+			<h2>Total Donations Collected</h2>
+			<p>
+				The green bar represents the total donations collected so far,<br />
+				while the red bar indicates our monthly expenses.
+			</p>
+			<div class="chart" id="column_chart"></div>
 
-<body>
-  <header>
-    <h1>Donation Dashboard</h1>
-  </header>
-  <main>
-    <h2>Total Donations Collected</h2>
-    <p>
-      The green bar represents the total donations collected so far,<br>
-      while the red bar indicates our monthly expenses.
-    </p>
-    <div class="chart" id="column_chart"></div>
-
-    <h2>Year-End Donation Projection</h2>
-    <p>
-      The red line represents the cumulative expenses for the year.<br>
-      The solid green line shows the cumulative donations collected so far,<br>
-      and the dotted green line projects the total donations by the end of the year.
-    </p>
-    <div class="chart" id="projection_chart"></div>
-  </main>
-  <footer>
-    <p>&copy; Cultivation Space</p>
-  </footer>
-</body>
-
+			<h2>Year-End Donation Projection</h2>
+			<p>
+				The red line represents the cumulative expenses for the year.<br />
+				The solid green line shows the cumulative donations collected so far,<br />
+				and the dotted green line projects the total donations by the end of the year.
+			</p>
+			<div class="chart" id="projection_chart"></div>
+		</main>
+		<footer>
+			<p>&copy; Cultivation Space</p>
+		</footer>
+	</body>
 </html>
