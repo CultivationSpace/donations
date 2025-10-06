@@ -80,7 +80,6 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 				.y((d) => y(d.sumNeeded))
 		)
 
-
 	// Add line for "actual donations"
 	svg.append('path')
 		.datum(data.filter((d) => d.hasDonation))
