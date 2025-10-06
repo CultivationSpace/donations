@@ -12,19 +12,17 @@
  * tooling required.
  */
 
-import { drawColumnChart } from './draw_column_chart';
-import { drawProjectionChart } from './draw_projection_chart';
+import { drawColumnChart } from './draw_column_chart'
+import { drawProjectionChart } from './draw_projection_chart'
 import { loadData } from './load_data'
-
 
 /**
  * Entry point – asynchronous IIFE (Immediately Invoked Function
  * Expression) so we can use `await` at the top level in plain
  * browsers. It loads the TSV data and renders both charts.
  */
-; (async () => {
+;(async () => {
 	const data = await loadData('donations.tsv') // Load data from a TSV file
 	drawColumnChart('#column_chart', data) // Draw the column chart
 	drawProjectionChart('#projection_chart', data) // Draw the projection chart
 })()
-

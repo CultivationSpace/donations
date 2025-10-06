@@ -14,7 +14,6 @@ export interface ProcessedEntry {
 	sumProjectedDonations?: number
 }
 
-
 /**
  * Load donation data from a TSV file and enrich each row with
  * cumulative sums and simple year‑end projections.

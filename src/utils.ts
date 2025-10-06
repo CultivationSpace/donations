@@ -1,4 +1,3 @@
-
 /** Primary alert color – used for “needed” amounts. */
 export const colorRed = '#AD4848'
 /** Primary positive color – used for “donated” amounts. */
@@ -29,5 +28,10 @@ export const monthLabels: string[] = [
  * @returns The formatted currency string.
  */
 export function formatCurrency(value: d3.NumberValue): string {
-	return value.valueOf().toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
+	return (
+		value
+			.valueOf()
+			.toFixed(0)
+			.replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
+	)
 }

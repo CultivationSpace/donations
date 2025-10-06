@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "rollup -c",
-    "format": "prettier --write web/**/*.js web/**/*.html",
+    "format": "prettier --write src/*.ts web/*.html",
     "server": "http-server --port 8080 -o --silent -c-1 web",
     "start": "npm run server"
   },

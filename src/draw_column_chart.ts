@@ -54,10 +54,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.domain([0, maxY * 1.1]) // Dynamic range based on data (+10% headroom)
 		.range([y0, y1])
 
-	const yAxis = d3
-		.axisLeft(y)
-		.tickFormat(formatCurrency)
-		.ticks(5)
+	const yAxis = d3.axisLeft(y).tickFormat(formatCurrency).ticks(5)
 
 	// Add y-axis to the chart
 	svg.append('g').style('font-size', '14px').attr('transform', `translate(${x0},0)`).call(yAxis)
