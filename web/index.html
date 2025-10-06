@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta
 			name="description"
-			content="Interactive dashboard visualising donations and expenses for Cultivation Space."
+			content="Explore Cultivation Space's interactive dashboard showcasing donations, expenses, and year-end projections."
 		/>
 		<title>Donation Dashboard</title>
 		<script src="charts.js" async type="module"></script>
@@ -79,12 +79,11 @@
 			<h1>Donation Dashboard</h1>
 
 			<section aria-labelledby="total-donations-heading">
-				<h2 id="total-donations-heading">Total Donations Collected</h2>
+				<h2 id="total-donations-heading">Monthly Donations vs. Expenses</h2>
 				<description>
-					The green column shows the total donations collected so far.<br />
-					The green striped columns represent pledged donations that have not yet been
-					transferred.<br />
-					The red column indicates our monthly expenses.
+					The green columns represent total donations received,<br />
+					while striped green columns show pledged but untransferred donations.<br />
+					The red columns indicate monthly expenses.
 				</description>
 				<div
 					class="chart"
@@ -95,13 +94,12 @@
 			</section>
 
 			<section aria-labelledby="projection-heading">
-				<h2 id="projection-heading">Year-End Donation Projection</h2>
+				<h2 id="projection-heading">Forecast: Year-End Donations and Expenses</h2>
 				<description>
-					The red line shows the running total of expenses for the current year.<br />
-					The solid green line shows the donations (received and pledged) we have collected so
-					far.<br />
-					The dashed green line shows the forecast for year-end donations based on the last
-					three months.
+					The red line shows the cumulative expenses for the year.<br />
+					The solid green line shows the total donations received and pledged,<br />
+					while the dashed green line provides a year-end forecast<br />
+					based on the trend of the last three months.
 				</description>
 				<div
 					class="chart"
