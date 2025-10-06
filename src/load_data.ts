@@ -1,27 +1,62 @@
+/**
+ * @fileoverview Data Loader for Donation Dashboard
+ *
+ * This module provides functionality to load and process donation data from a TSV file.
+ * It enriches the raw data with cumulative sums, projections, and other derived metrics
+ * to support the visualization of donation trends and year-end forecasts.
+ *
+ * Features:
+ * - Parses donation data from a TSV file.
+ * - Enriches data with cumulative sums for donations and needs.
+ * - Calculates year-end projections based on recent trends.
+ * - Supports flexible data structures for use in D3.js visualizations.
+ *
+ * Exports:
+ * - `ProcessedEntry`: Interface defining the structure of enriched donation data.
+ * - `loadData`: Function to load and process the donation data.
+ */
+
 import * as d3 from 'd3'
 import { monthLabels } from './utils'
 
-/** Interface for processed donation data entries. */
+/**
+ * Interface for processed donation data entries.
+ *
+ * Each entry represents a single month of donation data, enriched with
+ * cumulative sums and projections for visualization purposes.
+ */
 export interface ProcessedEntry {
-	label: string
-	column: number
-	donors: number
-	donated: number
-	pledged: number
-	received: number
-	needed: number
-	hasDonation: boolean
-	sumDonated: number
-	sumNeeded: number
-	sumProjectedDonations?: number
+	label: string // Short month label (e.g., "Jan", "Feb").
+	column: number // Column index for chronological sorting.
+	donors: number // Number of donors for the month.
+	donated: number // Total amount donated (pledged + received).
+	pledged: number // Amount pledged but not yet received.
+	received: number // Amount received as donations.
+	needed: number // Total amount needed for the month.
+	hasDonation: boolean // Flag indicating if any donations were received.
+	sumDonated: number // Cumulative sum of donations up to this month.
+	sumNeeded: number // Cumulative sum of needs up to this month.
+	sumProjectedDonations?: number // Projected cumulative donations (optional).
 }
 
 /**
- * Load donation data from a TSV file and enrich each row with
- * cumulative sums and simple year‑end projections.
+ * Load and process donation data from a TSV file.
+ *
+ * This function performs the following steps:
+ * 1. Parses the TSV file into raw data rows.
+ * 2. Enriches each row with derived metrics, including:
+ *    - Cumulative sums for donations and needs.
+ *    - Year-end projections based on recent donation trends.
+ * 3. Sorts the data chronologically by column index.
  *
  * @param file Relative path to the `.tsv` file.
- * @returns A promise resolving to an array of processed entries.
+ * @returns A promise resolving to an array of processed donation entries.
+ *
+ * Example Usage:
+ * ```typescript
+ * const data = await loadData('donations.tsv')
+ * console.log(data)
+ * ```
  */
 export async function loadData(file: string): Promise<ProcessedEntry[]> {
 	let data: d3.DSVRowArray<string>

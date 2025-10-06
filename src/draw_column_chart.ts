@@ -3,11 +3,40 @@ import { ProcessedEntry } from './load_data'
 import { colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
+ * @fileoverview Column Chart Renderer
+ *
+ * This module provides functionality to render a grouped column chart
+ * that compares monthly donations (received and pledged) against monthly needs.
+ * The chart is rendered using D3.js and includes the following features:
+ *
+ * - **Red Bars**: Represent the monthly "needed" amounts.
+ * - **Green Bars**: Represent the "received" donations.
+ * - **Striped Green Bars**: Represent the "pledged" donations (not yet received).
+ * - **Dynamic Scaling**: Automatically adjusts the y-axis range based on the data.
+ * - **Interactive Labels**: Includes x-axis labels for months and y-axis labels for amounts.
+ *
+ * This chart is designed to provide a clear visual comparison of donations versus needs.
+ *
+ * Exports:
+ * - `drawColumnChart`: Function to render the column chart.
+ */
+
+/**
  * Render a grouped column chart comparing monthly donations
  * (green) against monthly needs (red).
  *
- * @param query CSS selector of the container element.
- * @param data Enriched dataset returned by `loadData()`.
+ * The chart includes three types of bars:
+ * - **Needed (red)**: Total amount required for the month.
+ * - **Received (solid green)**: Donations received for the month.
+ * - **Pledged (striped green)**: Donations pledged but not yet received.
+ *
+ * @param query CSS selector of the container element where the chart will be rendered.
+ * @param data Enriched dataset returned by `loadData()`, containing processed donation data.
+ *
+ * Example Usage:
+ * ```typescript
+ * drawColumnChart('#column_chart', data)
+ * ```
  */
 export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 	const margin = { left: 60, right: 10, top: 20, bottom: 30 } // Chart margins
@@ -60,6 +89,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
+	// Define y-axis scale and axis
 	const maxY = d3.max(data, (d) => Math.max(d.donated, d.needed)) ?? 0
 	const y = d3
 		.scaleLinear()

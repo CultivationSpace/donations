@@ -3,16 +3,42 @@ import { ProcessedEntry } from './load_data'
 import { colorDarkGreen, colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
+ * @fileoverview Projection Chart Renderer
+ *
+ * This module provides functionality to render a line chart that visualizes
+ * cumulative donation trends and projections against cumulative needs.
+ * The chart is rendered using D3.js and includes the following features:
+ *
+ * - **Red Solid Line**: Represents cumulative "needed" amounts.
+ * - **Green Solid Line**: Represents cumulative "donated" amounts (received donations).
+ * - **Green Dashed Line**: Represents projected cumulative donations based on recent trends.
+ * - **Shortfall Annotation**: Highlights any funding shortfall with a labeled annotation box.
+ * - **Dynamic Scaling**: Automatically adjusts the y-axis range based on the data.
+ * - **Interactive Labels**: Includes x-axis labels for months and y-axis labels for amounts.
+ *
+ * This chart is designed to provide a clear visual representation of donation trends,
+ * projections, and any potential funding gaps.
+ *
+ * Exports:
+ * - `drawProjectionChart`: Function to render the projection chart.
+ */
+
+/**
  * Render a line chart with three series:
- *   1. Cumulative needs (red solid)
- *   2. Cumulative donations (green solid)
- *   3. Projected cumulative donations (green dashed)
+ *   1. **Cumulative Needs (red solid)**: Total cumulative "needed" amounts.
+ *   2. **Cumulative Donations (green solid)**: Total cumulative "donated" amounts (received donations).
+ *   3. **Projected Donations (green dashed)**: Projected cumulative donations based on recent trends.
  *
- * If the projection falls short, the chart draws an annotation box
- * indicating the shortfall amount.
+ * If the projected donations fall short of the cumulative needs, the chart
+ * draws an annotation box indicating the shortfall amount.
  *
- * @param {string}           query  CSS selector of the container element.
- * @param {ProcessedEntry[]} data   Enriched dataset returned by loadData().
+ * @param query CSS selector of the container element where the chart will be rendered.
+ * @param data Enriched dataset returned by `loadData()`, containing processed donation data.
+ *
+ * Example Usage:
+ * ```typescript
+ * drawProjectionChart('#projection_chart', data)
+ * ```
  */
 export function drawProjectionChart(query: string, data: ProcessedEntry[]): void {
 	const margin = { left: 70, right: 10, top: 20, bottom: 30 } // Chart margins
@@ -53,6 +79,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
+	// Define y-axis scale and axis
 	const maxY = d3.max(data, (d) => Math.max(d.sumNeeded, d.sumProjectedDonations ?? 0)) ?? 0
 	const y = d3
 		.scaleLinear()
