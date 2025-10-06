@@ -42,6 +42,13 @@
 				margin: 5rem 0 1rem;
 			}
 
+			description {
+				display: block;
+				margin-bottom: 1em;
+				font-size: 0.8em;
+				opacity: 0.6;
+			}
+
 			main .chart {
 				width: 800px;
 				height: 500px;
@@ -73,10 +80,12 @@
 
 			<section aria-labelledby="total-donations-heading">
 				<h2 id="total-donations-heading">Total Donations Collected</h2>
-				<p>
-					The green bar represents the total donations collected so far,<br />
-					while the red bar indicates our monthly expenses.
-				</p>
+				<description>
+					The green column shows the total donations collected so far.<br />
+					The green striped columns represent pledged donations that have not yet been
+					transferred.<br />
+					The red column indicates our monthly expenses.
+				</description>
 				<div
 					class="chart"
 					id="column_chart"
@@ -87,12 +96,13 @@
 
 			<section aria-labelledby="projection-heading">
 				<h2 id="projection-heading">Year-End Donation Projection</h2>
-				<p>
+				<description>
 					The red line shows the running total of expenses for the current year.<br />
-					The solid green line shows the donations we have collected so far.<br />
+					The solid green line shows the donations (received and pledged) we have collected so
+					far.<br />
 					The dashed green line shows the forecast for year-end donations based on the last
 					three months.
-				</p>
+				</description>
 				<div
 					class="chart"
 					id="projection_chart"
