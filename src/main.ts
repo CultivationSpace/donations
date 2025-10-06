@@ -1,5 +1,5 @@
 /**
- * @fileoverview Donation Dashboard renderer.
+ * @fileoverview Donation Dashboard renderer.
  *
  * Loads donation data from a TSV file and renders two interactive
  * D3.js charts:
@@ -8,9 +8,11 @@
  *  • Projection chart – shows cumulative totals, projected year‑end
  *    donations, and highlights any funding shortfall.
  *
- * Runs directly in the browser via `<script type="module">`; no build
+ * Runs directly in the browser via `<script type="module">`; no build
  * tooling required.
  */
+
+import * as d3 from 'd3'
 
 /** Primary alert color – used for “needed” amounts. */
 export const colorRed = '#AD4848'
@@ -18,7 +20,7 @@ export const colorRed = '#AD4848'
 export const colorGreen = '#48AD9C'
 
 /** Month abbreviations for fast numeric‑to‑label mapping. */
-export const monthLabels = [
+export const monthLabels: string[] = [
 	'Jan',
 	'Feb',
 	'Mar',
@@ -31,39 +33,41 @@ export const monthLabels = [
 	'Oct',
 	'Nov',
 	'Dec',
-];
+]
+
+/** Interface for processed donation data entries. */
+interface ProcessedEntry {
+	label: string
+	column: number
+	donors: number
+	donated: number
+	needed: number
+	hasDonation: boolean
+	sumDonated: number
+	sumNeeded: number
+	sumProjectedDonations?: number
+}
 
 /**
- * Entry point – asynchronous IIFE (Immediately Invoked Function
- * Expression) so we can use `await` at the top level in plain
+ * Entry point – asynchronous IIFE (Immediately Invoked Function
+ * Expression) so we can use `await` at the top level in plain
  * browsers. It loads the TSV data and renders both charts.
  */
-(async () => {
+; (async () => {
 	const data = await loadData('donations.tsv') // Load data from a TSV file
 	drawColumnChart('#column_chart', data) // Draw the column chart
 	drawProjectionChart('#projection_chart', data) // Draw the projection chart
-})();
+})()
 
 /**
  * Load donation data from a TSV file and enrich each row with
  * cumulative sums and simple year‑end projections.
  *
- * @param {string} file  Relative path to the `.tsv` file.
- * @returns {Promise<ProcessedEntry[]>}
- *
- * @typedef {Object} ProcessedEntry
- * @property {string}  label                    Month label (e.g. 'Jan').
- * @property {number}  column                   Zero‑based sequential index.
- * @property {number}  donors                   Donor count that month.
- * @property {number}  donated                  Amount donated that month (€).
- * @property {number}  needed                   Required amount that month (€).
- * @property {boolean} hasDonation              Whether the month has any donation.
- * @property {number}  sumDonated               Cumulative donations up to month.
- * @property {number}  sumNeeded                Cumulative needs up to month.
- * @property {?number} sumProjectedDonations    Projected cumulative donations.
+ * @param file Relative path to the `.tsv` file.
+ * @returns A promise resolving to an array of processed entries.
  */
-async function loadData(file) {
-	let data
+async function loadData(file: string): Promise<ProcessedEntry[]> {
+	let data: d3.DSVRowArray<string>
 	try {
 		// Load the TSV file using d3.tsv
 		data = await d3.tsv(file)
@@ -74,18 +78,18 @@ async function loadData(file) {
 	}
 
 	// Map and process each entry in the data
-	const entries = data.map((entry) => {
-		const date = entry.month.split('-') // Split the month into year and month
+	const entries: ProcessedEntry[] = data.map((entry) => {
+		const date = (entry.month as string).split('-') // Split the month into year and month
 		const year = parseInt(date[0], 10)
 		const month = parseInt(date[1], 10)
 
 		// Convert month number (1‑12) to short label
 		const label = monthLabels[month - 1] ?? `${month}`
 
-		let column = (year - 2020) * 12 + month - 1 // Calculate column index
-		const donors = parseInt(entry.donors, 10) // Parse donors as integer
-		const donated = parseFloat(entry.donated) // Parse donated amount as float
-		const needed = parseFloat(entry.needed) // Parse needed amount as float
+		const column = (year - 2020) * 12 + month - 1 // Calculate column index
+		const donors = parseInt(entry.donors as string, 10) // Parse donors as integer
+		const donated = parseFloat(entry.donated as string) // Parse donated amount as float
+		const needed = parseFloat(entry.needed as string) // Parse needed amount as float
 
 		// Return a processed entry object
 		return {
@@ -94,7 +98,9 @@ async function loadData(file) {
 			donors,
 			donated,
 			needed,
-			hasDonation: entry.donated > 0, // Flag if donation exists
+			hasDonation: donated > 0, // Flag if donation exists
+			sumDonated: 0, // Placeholder, will be calculated later
+			sumNeeded: 0, // Placeholder, will be calculated later
 		}
 	})
 
@@ -105,7 +111,7 @@ async function loadData(file) {
 	const lastThreeMonths = entries.filter((e) => e.hasDonation).slice(-3) // Get the last 3 months of data
 	const avgDonated =
 		lastThreeMonths.reduce((acc, entry) => acc + entry.donated, 0) / lastThreeMonths.length
-	// month starting the projection
+	// Month starting the projection
 	const projectionStartEntry = lastThreeMonths[lastThreeMonths.length - 1]
 
 	// Add cumulative and projected data to each entry
@@ -130,14 +136,14 @@ async function loadData(file) {
  * Render a grouped column chart comparing monthly donations
  * (green) against monthly needs (red).
  *
- * @param {string}           query  CSS selector of the container element.
- * @param {ProcessedEntry[]} data   Enriched dataset returned by loadData().
+ * @param query CSS selector of the container element.
+ * @param data Enriched dataset returned by `loadData()`.
  */
-function drawColumnChart(query, data) {
+function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 	const margin = { left: 60, right: 10, top: 20, bottom: 30 } // Chart margins
 
 	// Get container dimensions
-	const container = document.querySelector(query)
+	const container = document.querySelector(query) as HTMLElement
 	const width = container.clientWidth
 	const height = container.clientHeight
 
@@ -180,7 +186,7 @@ function drawColumnChart(query, data) {
 
 	const yAxis = d3
 		.axisLeft(y)
-		.tickFormat((v) => formatCurrency(v))
+		.tickFormat(formatCurrency)
 		.ticks(5)
 
 	// Add y-axis to the chart
@@ -193,7 +199,7 @@ function drawColumnChart(query, data) {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => x(d.label) + b * 0.25)
+		.attr('x', (d) => (x(d.label) ?? 0) + b * 0.25)
 		.attr('y', (d) => y(d.needed))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.needed))
@@ -204,14 +210,14 @@ function drawColumnChart(query, data) {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => x(d.label) + b * 0.15)
+		.attr('x', (d) => (x(d.label) ?? 0) + b * 0.15)
 		.attr('y', (d) => y(d.donated))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.donated))
 		.attr('fill', colorGreen)
 
 	// Append the SVG to the container
-	container.append(svg.node())
+	container.append(svg.node()!)
 }
 
 /**
@@ -226,11 +232,11 @@ function drawColumnChart(query, data) {
  * @param {string}           query  CSS selector of the container element.
  * @param {ProcessedEntry[]} data   Enriched dataset returned by loadData().
  */
-function drawProjectionChart(query, data) {
+function drawProjectionChart(query: string, data: ProcessedEntry[]): void {
 	const margin = { left: 70, right: 10, top: 20, bottom: 30 } // Chart margins
 
 	// Get container dimensions
-	const container = document.querySelector(query)
+	const container = document.querySelector(query) as HTMLElement
 	const width = container.clientWidth
 	const height = container.clientHeight
 
@@ -273,7 +279,7 @@ function drawProjectionChart(query, data) {
 
 	const yAxis = d3
 		.axisLeft(y)
-		.tickFormat((v) => formatCurrency(v.valueOf()))
+		.tickFormat(formatCurrency)
 		.ticks(5)
 
 	// Add y-axis to the chart
@@ -290,8 +296,8 @@ function drawProjectionChart(query, data) {
 		.attr(
 			'd',
 			d3
-				.line()
-				.x((d) => x(d.label) + b * 0.5)
+				.line<ProcessedEntry>()
+				.x((d) => (x(d.label) ?? 0) + b * 0.5)
 				.y((d) => y(d.sumNeeded))
 		)
 
@@ -305,9 +311,9 @@ function drawProjectionChart(query, data) {
 		.attr(
 			'd',
 			d3
-				.line()
-				.x((d) => x(d.label) + b * 0.5)
-				.y((d) => y(d.sumProjectedDonations))
+				.line<ProcessedEntry>()
+				.x((d) => (x(d.label) ?? 0) + b * 0.5)
+				.y((d) => y(d.sumProjectedDonations!))
 		)
 
 	// Add line for "actual donations"
@@ -319,14 +325,14 @@ function drawProjectionChart(query, data) {
 		.attr(
 			'd',
 			d3
-				.line()
-				.x((d) => x(d.label) + b * 0.5)
+				.line<ProcessedEntry>()
+				.x((d) => (x(d.label) ?? 0) + b * 0.5)
 				.y((d) => y(d.sumDonated))
 		)
 
 	// Calculate the difference between projected and needed donations
-	const sumProjectedDonations = data[data.length - 1].sumProjectedDonations
-	const sumNeeded = data[data.length - 1].sumNeeded
+	const sumProjectedDonations = data[data.length - 1].sumProjectedDonations!
+	const sumNeeded = data[data.length - 1]!.sumNeeded
 	const difference = sumProjectedDonations - sumNeeded
 
 	// If there is a shortfall, draw an annotation
@@ -363,17 +369,17 @@ function drawProjectionChart(query, data) {
 	}
 
 	// Append the SVG to the container
-	container.append(svg.node())
+	container.append(svg.node()!)
 }
 
 /**
  * Format a number as Euro currency with thousands separators and a
- * trailing " €". A minimalist helper to avoid bringing in Intl for
+ * trailing " €". A minimalist helper to avoid bringing in `Intl` for
  * this demo.
  *
- * @param {number} value
- * @returns {string}
+ * @param value The number to format.
+ * @returns The formatted currency string.
  */
-function formatCurrency(value) {
-	return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
+function formatCurrency(value: d3.NumberValue): string {
+	return value.valueOf().toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
 }

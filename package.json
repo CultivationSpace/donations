@@ -2,6 +2,7 @@
   "name": "cultivation-space-donations",
   "version": "1.0.0",
   "scripts": {
+    "build": "tsc",
     "format": "prettier --write web/**/*.js web/**/*.html",
     "server": "http-server --port 8080 -o --silent -c-1 web",
     "start": "npm run server"
@@ -14,9 +15,11 @@
   },
   "license": "MIT",
   "description": "Static D3 dashboard for Cultivation Space donations",
-  "devDependencies": {
+  "dependencies": {
+    "d3": "^7.9.0",
     "http-server": "^14.1.1",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
   },
   "prettier": {
     "singleQuote": true,
@@ -25,5 +28,8 @@
     "tabWidth": 3,
     "useTabs": true,
     "semi": false
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
   }
 }
