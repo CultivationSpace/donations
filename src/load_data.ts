@@ -69,15 +69,15 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 	let sumDonated = 0
 	let sumNeeded = 0
 	entries.forEach((entry) => {
-		sumDonated += entry.donated ?? 0 // Cumulative donated amount
-		sumNeeded += entry.needed ?? 0 // Cumulative needed amount
+		sumDonated += entry.donated + entry.pending
+		sumNeeded += entry.needed
 		entry.sumDonated = sumDonated
 		entry.sumNeeded = sumNeeded
 	})
 
 	// Calculate average donations based on the last 3 months
 	const lastThreeMonths = entries.filter((e) => e.hasDonation).slice(-3) // Get the last 3 months of data
-	const avgDonated = lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length
+	const avgDonated = lastThreeMonths.reduce((acc, e) => acc + e.donated + e.pending, 0) / lastThreeMonths.length
 	const avgSumDonated = lastThreeMonths.reduce((acc, e) => acc + e.sumDonated, 0) / lastThreeMonths.length
 	const avgColumn = lastThreeMonths.reduce((acc, e) => acc + e.column, 0) / lastThreeMonths.length
 
