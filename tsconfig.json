@@ -2,12 +2,11 @@
   "compilerOptions": {
     "target": "ES6",
     "lib": ["DOM", "ES6"],
-    "module": "commonjs",
+    "module": "esnext",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
     "rootDir": "./src"
   },
   "include": [
