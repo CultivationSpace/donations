@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { ProcessedEntry } from './load_data'
-import { colorGreen, colorRed, formatCurrency } from './utils'
+import { colorDarkGreen, colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
  * Render a line chart with three series:
@@ -80,20 +80,6 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 				.y((d) => y(d.sumNeeded))
 		)
 
-	// Add dashed line for "projected donations"
-	svg.append('path')
-		.datum(data.filter((d) => d.sumProjectedDonations))
-		.attr('fill', 'none')
-		.attr('stroke', colorGreen)
-		.attr('stroke-width', 3)
-		.attr('stroke-dasharray', '3,6')
-		.attr(
-			'd',
-			d3
-				.line<ProcessedEntry>()
-				.x((d) => (x(d.label) ?? 0) + b * 0.5)
-				.y((d) => y(d.sumProjectedDonations!))
-		)
 
 	// Add line for "actual donations"
 	svg.append('path')
@@ -107,6 +93,21 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 				.line<ProcessedEntry>()
 				.x((d) => (x(d.label) ?? 0) + b * 0.5)
 				.y((d) => y(d.sumDonated))
+		)
+
+	// Add dashed line for "projected donations"
+	svg.append('path')
+		.datum(data.filter((d) => d.sumProjectedDonations))
+		.attr('fill', 'none')
+		.attr('stroke', colorDarkGreen)
+		.attr('stroke-width', 2)
+		.attr('stroke-dasharray', '2,3')
+		.attr(
+			'd',
+			d3
+				.line<ProcessedEntry>()
+				.x((d) => (x(d.label) ?? 0) + b * 0.5)
+				.y((d) => y(d.sumProjectedDonations!))
 		)
 
 	// Calculate the difference between projected and needed donations

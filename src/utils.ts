@@ -2,6 +2,7 @@
 export const colorRed = '#AD4848'
 /** Primary positive color – used for “donated” amounts. */
 export const colorGreen = '#48AD9C'
+export const colorDarkGreen = '#2A7B6D'
 
 /** Month abbreviations for fast numeric‑to‑label mapping. */
 export const monthLabels: string[] = [

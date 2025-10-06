@@ -65,13 +65,7 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 	// Sort entries by column index
 	entries.sort((a, b) => a.column - b.column)
 
-	// Calculate average donations based on the last 3 months
-	const lastThreeMonths = entries.filter((e) => e.hasDonation).slice(-3) // Get the last 3 months of data
-	const avgDonated = lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length
-	// Month starting the projection
-	const projectionStartEntry = lastThreeMonths[lastThreeMonths.length - 1]
-
-	// Add cumulative and projected data to each entry
+	// Add cumulative data to each entry
 	let sumDonated = 0
 	let sumNeeded = 0
 	entries.forEach((entry) => {
@@ -79,10 +73,22 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		sumNeeded += entry.needed ?? 0 // Cumulative needed amount
 		entry.sumDonated = sumDonated
 		entry.sumNeeded = sumNeeded
+	})
 
-		if (entry.column >= projectionStartEntry.column) {
+	// Calculate average donations based on the last 3 months
+	const lastThreeMonths = entries.filter((e) => e.hasDonation).slice(-3) // Get the last 3 months of data
+	const avgDonated = lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length
+	const avgSumDonated = lastThreeMonths.reduce((acc, e) => acc + e.sumDonated, 0) / lastThreeMonths.length
+	const avgColumn = lastThreeMonths.reduce((acc, e) => acc + e.column, 0) / lastThreeMonths.length
+
+	// Month starting the projection
+	const projectionStart = lastThreeMonths[0].column
+
+	// Add projected data to each entry
+	entries.forEach((entry) => {
+		if (entry.column >= projectionStart) {
 			entry.sumProjectedDonations =
-				sumDonated + avgDonated * (entry.column - projectionStartEntry.column) // Projected donations
+				avgSumDonated + avgDonated * (entry.column - avgColumn) // Projected donations
 		}
 	})
 
