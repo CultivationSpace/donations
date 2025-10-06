@@ -17,12 +17,18 @@
 			}
 
 			header {
-				padding: 10px 0;
+				text-align: left;
+				margin: 3rem;
+			}
+
+			main {
 				text-align: center;
+				margin: 3rem;
 			}
 
 			h1,
 			h2 {
+				text-align: center;
 				font-weight: 600;
 				letter-spacing: -0.025em;
 			}
@@ -34,10 +40,6 @@
 
 			h2 {
 				margin: 5rem 0 1rem;
-			}
-
-			main {
-				text-align: center;
 			}
 
 			main .chart {
@@ -53,14 +55,22 @@
 				background-color: #67ead1;
 				color: #000;
 			}
+
+			#logo {
+				display: block;
+				width: 250px;
+				height: auto;
+			}
 		</style>
 	</head>
 
 	<body>
 		<header>
-			<h1>Donation Dashboard</h1>
+			<img id="logo" src="https://cultivation.space/img/logo.svg" alt="Cultivation Space logo" />
 		</header>
 		<main>
+			<h1>Donation Dashboard</h1>
+
 			<section aria-labelledby="total-donations-heading">
 				<h2 id="total-donations-heading">Total Donations Collected</h2>
 				<p>
