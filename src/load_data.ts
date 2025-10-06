@@ -72,8 +72,8 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 	let sumDonated = 0
 	let sumNeeded = 0
 	entries.forEach((entry) => {
-		entry.sumDonated = (sumDonated += entry.donated)
-		entry.sumNeeded = (sumNeeded += entry.needed)
+		entry.sumDonated = sumDonated += entry.donated
+		entry.sumNeeded = sumNeeded += entry.needed
 	})
 
 	// Calculate average donations based on the last 3 months
