@@ -32,6 +32,18 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.style('font-family', 'sans-serif')
 		.style('font-size', '10px')
 
+	// Add fill pattern for pending amounts
+	svg.append("pattern")
+		.attr("id", "pattern_pending")
+		.attr("patternUnits", "userSpaceOnUse")
+		.attr("width", 5)
+		.attr("height", 5)
+		.attr("patternTransform", "rotate(45)")
+		.append("rect")
+		.attr("height", 10)
+		.attr("width", 3)
+		.attr("fill", colorGreen);
+
 	// Define x-axis scale and axis
 	const x = d3
 		.scaleBand()
@@ -48,7 +60,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
-	const maxY = d3.max(data, (d) => Math.max(d.donated, d.needed)) ?? 0
+	const maxY = d3.max(data, (d) => Math.max(d.donated + d.pending, d.needed)) ?? 0
 	const y = d3
 		.scaleLinear()
 		.domain([0, maxY * 1.1]) // Dynamic range based on data (+10% headroom)
@@ -71,6 +83,8 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.needed))
 		.attr('fill', colorRed)
+		.attr('stroke', colorRed)
+		.attr('stroke-width', 1)
 
 	// Add bars for "donated" values
 	svg.selectAll('donated')
@@ -82,6 +96,21 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.donated))
 		.attr('fill', colorGreen)
+		.attr('stroke', colorGreen)
+		.attr('stroke-width', 1)
+
+	// Add bars for "pending" values
+	svg.selectAll('pending')
+		.data(data)
+		.enter()
+		.append('rect')
+		.attr('x', (d) => (x(d.label) ?? 0) + b * 0.15)
+		.attr('y', (d) => y(d.pending + d.donated))
+		.attr('width', b * 0.6)
+		.attr('height', (d) => y(0) - y(d.pending))
+		.attr('fill', 'url(#pattern_pending)')
+		.attr('stroke', colorGreen)
+		.attr('stroke-width', 1)
 
 	// Append the SVG to the container
 	container.append(svg.node()!)
