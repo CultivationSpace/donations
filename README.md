@@ -2,9 +2,7 @@
 
 A simple, static web application that processes donation data from a [donations.tsv](web/donations.tsv) file and visualizes it using D3.js. The application provides charts to compare monthly donations against expenses and project year-end trends.
 
-## Demo
-
-You can view a live demo of the application [here](https://cultivationspace.github.io/donations).
+You can see the running application [here](https://cultivationspace.github.io/donations).
 
 ## Installation
 
