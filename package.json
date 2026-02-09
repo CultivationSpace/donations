@@ -15,7 +15,6 @@
   },
   "license": "MIT",
   "description": "Static D3 dashboard for Cultivation Space donations",
-  "dependencies": {},
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5",
@@ -25,15 +24,15 @@
     "semi": false
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.2",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/d3": "^7.4.3",
     "concurrently": "^9.2.1",
     "d3": "^7.9.0",
     "http-server": "^14.1.1",
-    "rollup-plugin-terser": "^7.0.2",
+    "prettier": "^3.6.2",
     "rollup": "^2.79.2",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3"
