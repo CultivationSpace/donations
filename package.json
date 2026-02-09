@@ -2,10 +2,10 @@
   "name": "cultivation-space-donations",
   "version": "1.0.0",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "npm run build && concurrently \"rollup -c --watch\" \"npm run server\"",
+    "build": "vite build",
+    "dev": "vite dev",
     "format": "prettier --write src/*.ts web/*.html",
-    "server": "http-server --port 8080 -o --silent -c-1 web"
+    "preview": "vite preview"
   },
   "type": "module",
   "private": true,
