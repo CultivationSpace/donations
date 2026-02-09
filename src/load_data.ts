@@ -75,8 +75,8 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		const year = parseInt(date[0], 10)
 		const month = parseInt(date[1], 10)
 
-		// Convert month number (1‑12) to short label
-		const label = monthLabels[month - 1] ?? `${month}`
+		// Convert month number (1‑12) to short label with year suffix for uniqueness
+		const label = `${monthLabels[month - 1] ?? month} '${String(year).slice(2)}`
 
 		const column = (year - 2020) * 12 + month - 1 // Calculate column index
 		const donors = parseInt(entry.donors as string, 10) // Parse donors as integer
