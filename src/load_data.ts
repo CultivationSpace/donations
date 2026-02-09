@@ -31,7 +31,8 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		const year = parseInt(date[0], 10)
 		const month = parseInt(date[1], 10)
 
-		const label = `${monthLabels[month - 1] ?? month} '${String(year).slice(2)}`
+		const monthLabel = monthLabels[month - 1] ?? month
+		const label = month === 1 ? `${monthLabel} '${String(year).slice(2)}` : `${monthLabel}`
 		const column = year * 12 + month
 		const donors = parseInt(entry.donors as string, 10)
 		const needed = parseFloat(entry.needed as string)
