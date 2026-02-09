@@ -47,7 +47,7 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 			needed,
 			pledged,
 			received,
-			hasDonation: received > 0,
+			hasDonation: received > 0 || pledged > 0,
 			sumDonated: 0,
 			sumNeeded: 0,
 		}
