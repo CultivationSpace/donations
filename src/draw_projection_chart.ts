@@ -100,7 +100,11 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 	const sumProjectedDonations = lastEntry?.sumProjectedDonations
 	const sumNeeded = lastEntry?.sumNeeded
 
-	if (sumProjectedDonations != null && sumNeeded != null && sumProjectedDonations - sumNeeded < 0) {
+	if (
+		sumProjectedDonations != null &&
+		sumNeeded != null &&
+		sumProjectedDonations - sumNeeded < 0
+	) {
 		const difference = sumProjectedDonations - sumNeeded
 		const yp = y(sumProjectedDonations)
 		const yn = y(sumNeeded)

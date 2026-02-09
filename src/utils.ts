@@ -21,5 +21,10 @@ export const monthLabels: string[] = [
 
 /** Format a number as Euro currency, e.g. 1234567 -> "1'234'567 €" */
 export function formatCurrency(value: NumberValue): string {
-	return value.valueOf().toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
+	return (
+		value
+			.valueOf()
+			.toFixed(0)
+			.replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' €'
+	)
 }
