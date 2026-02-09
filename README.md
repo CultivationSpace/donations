@@ -52,11 +52,4 @@ donations/
 
 ## Deployment
 
-To deploy the application, you can use any static hosting service (e.g., GitHub Pages, Netlify, Vercel). For GitHub Pages:
-
-1. Build the project:
-```bash
-npm run build
-```
-
-2. Push the contents of the `web/` directory to the `gh-pages` branch.
+Deployment to GitHub Pages is automated via GitHub Actions. Pushing to the `main` branch triggers a workflow that builds the project and deploys the `web/` directory.
