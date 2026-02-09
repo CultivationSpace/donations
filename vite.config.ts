@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
 	root: 'web',
+	base: '/donations/',
 	publicDir: '.',
 	resolve: {
 		alias: {
