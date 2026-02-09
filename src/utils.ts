@@ -13,6 +13,8 @@
  * - `formatCurrency`: Function to format numbers as Euro currency strings.
  */
 
+import type { NumberValue } from 'd3'
+
 /** Primary alert color – used for "needed" amounts. */
 export const colorRed = '#AD4848'
 
@@ -52,7 +54,7 @@ export const monthLabels: string[] = [
  * @param value The number to format (can be a `number` or `d3.NumberValue`).
  * @returns The formatted currency string.
  */
-export function formatCurrency(value: d3.NumberValue): string {
+export function formatCurrency(value: NumberValue): string {
 	return (
 		value
 			.valueOf() // Convert to a primitive number
