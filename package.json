@@ -6,7 +6,8 @@
     "dev": "vite dev",
     "format": "prettier --write src/*.ts web/*.html",
     "lint": "eslint src/",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "type": "module",
   "private": true,
