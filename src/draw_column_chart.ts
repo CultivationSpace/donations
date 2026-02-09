@@ -3,56 +3,22 @@ import { ProcessedEntry } from './load_data'
 import { colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
- * @fileoverview Column Chart Renderer
- *
- * This module provides functionality to render a grouped column chart
- * that compares monthly donations (received and pledged) against monthly needs.
- * The chart is rendered using D3.js and includes the following features:
- *
- * - **Red Bars**: Represent the monthly "needed" amounts.
- * - **Green Bars**: Represent the "received" donations.
- * - **Striped Green Bars**: Represent the "pledged" donations (not yet received).
- * - **Dynamic Scaling**: Automatically adjusts the y-axis range based on the data.
- * - **Interactive Labels**: Includes x-axis labels for months and y-axis labels for amounts.
- *
- * This chart is designed to provide a clear visual comparison of donations versus needs.
- *
- * Exports:
- * - `drawColumnChart`: Function to render the column chart.
- */
-
-/**
- * Render a grouped column chart comparing monthly donations
- * (green) against monthly needs (red).
- *
- * The chart includes three types of bars:
- * - **Needed (red)**: Total amount required for the month.
- * - **Received (solid green)**: Donations received for the month.
- * - **Pledged (striped green)**: Donations pledged but not yet received.
- *
- * @param query CSS selector of the container element where the chart will be rendered.
- * @param data Enriched dataset returned by `loadData()`, containing processed donation data.
- *
- * Example Usage:
- * ```typescript
- * drawColumnChart('#column_chart', data)
- * ```
+ * Render a grouped column chart comparing monthly donations (green)
+ * against monthly needs (red). Pledged amounts are shown as striped green bars.
  */
 export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
-	const margin = { left: 60, right: 10, top: 20, bottom: 30 } // Chart margins
+	const margin = { left: 60, right: 10, top: 20, bottom: 30 }
 
 	const container = document.querySelector(query) as HTMLElement | null
 	if (!container) return
 	const width = container.clientWidth
 	const height = container.clientHeight
 
-	// Define chart boundaries
 	const x0 = margin.left
 	const x1 = width - margin.right
 	const y0 = height - margin.bottom
 	const y1 = margin.top
 
-	// Create an SVG element
 	const svg = d3
 		.create('svg')
 		.attr('width', width)
@@ -61,7 +27,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.style('font-family', 'sans-serif')
 		.style('font-size', '10px')
 
-	// Add fill pattern for pledged amounts
+	// Diagonal stripe pattern for pledged amounts
 	svg.append('pattern')
 		.attr('id', 'pattern_pledged')
 		.attr('patternUnits', 'userSpaceOnUse')
@@ -73,37 +39,32 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('width', 3)
 		.attr('fill', colorGreen)
 
-	// Define x-axis scale and axis
 	const x = d3
 		.scaleBand()
-		.domain(data.map((d) => d.label)) // Use labels as domain
-		.range([x0, x1]) // Map to chart width
+		.domain(data.map((d) => d.label))
+		.range([x0, x1])
 
-	const xAxis = d3.axisBottom(x).tickSize(0) // Create x-axis
-
-	// Add x-axis to the chart
 	svg.append('g')
 		.style('font-size', '14px')
 		.attr('transform', `translate(0,${y0})`)
-		.call(xAxis)
+		.call(d3.axisBottom(x).tickSize(0))
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
-	// Define y-axis scale and axis
 	const maxY = d3.max(data, (d) => Math.max(d.donated, d.needed)) ?? 0
 	const y = d3
 		.scaleLinear()
-		.domain([0, maxY * 1.1]) // Dynamic range based on data (+10% headroom)
+		.domain([0, maxY * 1.1])
 		.range([y0, y1])
 
-	const yAxis = d3.axisLeft(y).tickFormat(formatCurrency).ticks(5)
+	svg.append('g')
+		.style('font-size', '14px')
+		.attr('transform', `translate(${x0},0)`)
+		.call(d3.axisLeft(y).tickFormat(formatCurrency).ticks(5))
 
-	// Add y-axis to the chart
-	svg.append('g').style('font-size', '14px').attr('transform', `translate(${x0},0)`).call(yAxis)
+	const b = x.bandwidth()
 
-	const b = x.bandwidth() // Get bandwidth for bars
-
-	// Add bars for "needed" values
+	// Needed (red, behind)
 	svg.selectAll('needed')
 		.data(data)
 		.enter()
@@ -116,7 +77,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('stroke', colorRed)
 		.attr('stroke-width', 1)
 
-	// Add bars for "received" values
+	// Received (solid green)
 	svg.selectAll('received')
 		.data(data)
 		.enter()
@@ -129,7 +90,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('stroke', colorGreen)
 		.attr('stroke-width', 1)
 
-	// Add bars for "pledged" values
+	// Pledged (striped green, stacked on top of received)
 	svg.selectAll('pledged')
 		.data(data)
 		.enter()
@@ -142,6 +103,5 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('stroke', colorGreen)
 		.attr('stroke-width', 1)
 
-	// Append the SVG to the container
 	container.append(svg.node()!)
 }

@@ -3,58 +3,22 @@ import { ProcessedEntry } from './load_data'
 import { colorDarkGreen, colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
- * @fileoverview Projection Chart Renderer
- *
- * This module provides functionality to render a line chart that visualizes
- * cumulative donation trends and projections against cumulative needs.
- * The chart is rendered using D3.js and includes the following features:
- *
- * - **Red Solid Line**: Represents cumulative "needed" amounts.
- * - **Green Solid Line**: Represents cumulative "donated" amounts (received donations).
- * - **Green Dashed Line**: Represents projected cumulative donations based on recent trends.
- * - **Shortfall Annotation**: Highlights any funding shortfall with a labeled annotation box.
- * - **Dynamic Scaling**: Automatically adjusts the y-axis range based on the data.
- * - **Interactive Labels**: Includes x-axis labels for months and y-axis labels for amounts.
- *
- * This chart is designed to provide a clear visual representation of donation trends,
- * projections, and any potential funding gaps.
- *
- * Exports:
- * - `drawProjectionChart`: Function to render the projection chart.
- */
-
-/**
- * Render a line chart with three series:
- *   1. **Cumulative Needs (red solid)**: Total cumulative "needed" amounts.
- *   2. **Cumulative Donations (green solid)**: Total cumulative "donated" amounts (received donations).
- *   3. **Projected Donations (green dashed)**: Projected cumulative donations based on recent trends.
- *
- * If the projected donations fall short of the cumulative needs, the chart
- * draws an annotation box indicating the shortfall amount.
- *
- * @param query CSS selector of the container element where the chart will be rendered.
- * @param data Enriched dataset returned by `loadData()`, containing processed donation data.
- *
- * Example Usage:
- * ```typescript
- * drawProjectionChart('#projection_chart', data)
- * ```
+ * Render a cumulative line chart with three series: needs (red), actual donations (green),
+ * and projected donations (dashed green). Annotates year-end shortfall if projected < needed.
  */
 export function drawProjectionChart(query: string, data: ProcessedEntry[]): void {
-	const margin = { left: 70, right: 10, top: 20, bottom: 30 } // Chart margins
+	const margin = { left: 70, right: 10, top: 20, bottom: 30 }
 
 	const container = document.querySelector(query) as HTMLElement | null
 	if (!container) return
 	const width = container.clientWidth
 	const height = container.clientHeight
 
-	// Define chart boundaries
 	const x0 = margin.left
 	const x1 = width - margin.right
 	const y0 = height - margin.bottom
 	const y1 = margin.top
 
-	// Create an SVG element
 	const svg = d3
 		.create('svg')
 		.attr('width', width)
@@ -63,37 +27,32 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 		.style('font-family', 'sans-serif')
 		.style('font-size', '10px')
 
-	// Define x-axis scale and axis
 	const x = d3
 		.scaleBand()
-		.domain(data.map((d) => d.label)) // Use labels as domain
-		.range([x0, x1]) // Map to chart width
+		.domain(data.map((d) => d.label))
+		.range([x0, x1])
 
-	const xAxis = d3.axisBottom(x).tickSize(0) // Create x-axis
-
-	// Add x-axis to the chart
 	svg.append('g')
 		.style('font-size', '14px')
 		.attr('transform', `translate(0,${y0})`)
-		.call(xAxis)
+		.call(d3.axisBottom(x).tickSize(0))
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
-	// Define y-axis scale and axis
 	const maxY = d3.max(data, (d) => Math.max(d.sumNeeded, d.sumProjectedDonations ?? 0)) ?? 0
 	const y = d3
 		.scaleLinear()
-		.domain([0, maxY * 1.1]) // Dynamic range (+10% headroom)
+		.domain([0, maxY * 1.1])
 		.range([y0, y1])
 
-	const yAxis = d3.axisLeft(y).tickFormat(formatCurrency).ticks(5)
+	svg.append('g')
+		.style('font-size', '14px')
+		.attr('transform', `translate(${x0},0)`)
+		.call(d3.axisLeft(y).tickFormat(formatCurrency).ticks(5))
 
-	// Add y-axis to the chart
-	svg.append('g').style('font-size', '14px').attr('transform', `translate(${x0},0)`).call(yAxis)
+	const b = x.bandwidth()
 
-	const b = x.bandwidth() // Get bandwidth for bars
-
-	// Add line for "needed" values
+	// Cumulative needs (red)
 	svg.append('path')
 		.datum(data)
 		.attr('fill', 'none')
@@ -107,7 +66,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 				.y((d) => y(d.sumNeeded))
 		)
 
-	// Add line for "actual donations"
+	// Cumulative actual donations (green)
 	svg.append('path')
 		.datum(data.filter((d) => d.hasDonation))
 		.attr('fill', 'none')
@@ -121,7 +80,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 				.y((d) => y(d.sumDonated))
 		)
 
-	// Add dashed line for "projected donations"
+	// Projected donations (dashed green)
 	svg.append('path')
 		.datum(data.filter((d) => d.sumProjectedDonations))
 		.attr('fill', 'none')
@@ -136,12 +95,11 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 				.y((d) => y(d.sumProjectedDonations!))
 		)
 
-	// Calculate the difference between projected and needed donations
+	// Shortfall annotation
 	const lastEntry = data[data.length - 1]
 	const sumProjectedDonations = lastEntry?.sumProjectedDonations
 	const sumNeeded = lastEntry?.sumNeeded
 
-	// If there is a shortfall, draw an annotation
 	if (sumProjectedDonations != null && sumNeeded != null && sumProjectedDonations - sumNeeded < 0) {
 		const difference = sumProjectedDonations - sumNeeded
 		const yp = y(sumProjectedDonations)
@@ -162,7 +120,6 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 			.attr('stroke', '#000')
 			.attr('stroke-width', 1.5)
 
-		// Add text annotation for the shortfall
 		svg.append('text')
 			.attr('x', xm)
 			.attr('y', (yp + yn) / 2)
@@ -175,6 +132,5 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 			.attr('fill', colorRed)
 	}
 
-	// Append the SVG to the container
 	container.append(svg.node()!)
 }
