@@ -26,14 +26,18 @@ npm install
 
 After completing the [installation](#installation) steps, you can run `npm run dev` to start a local development server at [http://localhost:5173](http://localhost:5173). Vite provides hot module replacement, so changes to TypeScript and HTML files are reflected instantly in the browser.
 
-To maintain consistent coding style, please run `npm run format` before committing.
+Before committing, run `npm run check` to format, lint, and test the code.
 
 ## Scripts
 
 - `npm run build`: Compile and bundle the project into the `dist/` directory.
+- `npm run check`: Run format, lint, and tests in sequence.
 - `npm run dev`: Start a local Vite development server with hot reloading.
 - `npm run format`: Format TypeScript and HTML files using Prettier.
+- `npm run lint`: Lint TypeScript files using ESLint.
 - `npm run preview`: Serve the production build locally for testing.
+- `npm run test`: Run tests using Vitest.
+- `npm run upgrade`: Upgrade all dependencies to their latest versions.
 
 ## File Structure
 
@@ -52,4 +56,4 @@ donations/
 
 ## Deployment
 
-Deployment to GitHub Pages is automated via GitHub Actions. Pushing to the `main` branch triggers a workflow that builds the project and deploys the `dist/` directory.
+Deployment to GitHub Pages is automated via GitHub Actions. Pushing to the `main` branch triggers a workflow that lints, tests, and builds the project, then deploys the `dist/` directory.
