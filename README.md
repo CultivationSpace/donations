@@ -47,7 +47,8 @@ donations/
 ├── web/
 │   ├── index.html      # HTML
 │   └── donations.tsv   # TSV file containing donation data
-├── .github/            # GitHub workflows for CI/CD
+├── .github/            # GitHub workflows and Dependabot config
+├── eslint.config.js    # ESLint configuration
 ├── package.json        # Project metadata and scripts
 ├── vite.config.ts      # Vite configuration for bundling
 ├── tsconfig.json       # TypeScript configuration
