@@ -8,7 +8,8 @@
     "format": "prettier --write src/*.ts web/*.html",
     "lint": "eslint src/",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "upgrade": "npx npm-check-updates -u && npm install"
   },
   "type": "module",
   "private": true,
@@ -32,6 +33,7 @@
     "d3": "^7.9.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
+    "npm-check-updates": "^19.3.2",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
