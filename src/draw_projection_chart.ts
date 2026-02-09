@@ -137,12 +137,13 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 		)
 
 	// Calculate the difference between projected and needed donations
-	const sumProjectedDonations = data[data.length - 1].sumProjectedDonations!
-	const sumNeeded = data[data.length - 1]!.sumNeeded
-	const difference = sumProjectedDonations - sumNeeded
+	const lastEntry = data[data.length - 1]
+	const sumProjectedDonations = lastEntry?.sumProjectedDonations
+	const sumNeeded = lastEntry?.sumNeeded
 
 	// If there is a shortfall, draw an annotation
-	if (difference < 0) {
+	if (sumProjectedDonations != null && sumNeeded != null && sumProjectedDonations - sumNeeded < 0) {
+		const difference = sumProjectedDonations - sumNeeded
 		const yp = y(sumProjectedDonations)
 		const yn = y(sumNeeded)
 		const xa = x1 - b * 0.3
