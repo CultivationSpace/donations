@@ -53,6 +53,26 @@ donations/
 └── README.md           # Project documentation
 ```
 
+## Updating Donation Data
+
+The donation data lives in [`web/donations.tsv`](web/donations.tsv), a tab-separated file with the following columns:
+
+| Column     | Description                          | Example    |
+| ---------- | ------------------------------------ | ---------- |
+| `month`    | Year and month (`YYYY-MM`)           | `2026-02`  |
+| `donors`   | Number of new donors                 | `3`        |
+| `received` | Amount received (€)                  | `1200.00`  |
+| `pledged`  | Amount pledged but not yet received (€) | `150.00` |
+| `needed`   | Monthly expenses (€)                 | `1487.49`  |
+
+To add a new month, append a row at the end. To preview the changes, run:
+```bash
+npm run dev
+```
+and open [localhost:5173](http://localhost:5173) in your browser.
+
+Once everything looks correct, commit and push to `main` — the dashboard will update automatically via CI.
+
 ## Deployment
 
 Deployment to GitHub Pages is automated via GitHub Actions. Pushing to the `main` branch triggers a workflow that lints, tests, and builds the project, then deploys the `dist/` directory.
