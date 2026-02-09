@@ -43,8 +43,8 @@ import { colorDarkGreen, colorGreen, colorRed, formatCurrency } from './utils'
 export function drawProjectionChart(query: string, data: ProcessedEntry[]): void {
 	const margin = { left: 70, right: 10, top: 20, bottom: 30 } // Chart margins
 
-	// Get container dimensions
-	const container = document.querySelector(query) as HTMLElement
+	const container = document.querySelector(query) as HTMLElement | null
+	if (!container) return
 	const width = container.clientWidth
 	const height = container.clientHeight
 
