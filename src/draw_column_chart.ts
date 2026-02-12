@@ -1,32 +1,32 @@
-import * as d3 from 'd3'
-import { ProcessedEntry } from './load_data'
-import { indexToLabel, colorGreen, colorRed, formatCurrency } from './utils'
+import * as d3 from 'd3';
+import { ProcessedEntry } from './load_data';
+import { indexToLabel, colorGreen, colorRed, formatCurrency } from './utils';
 
 /**
  * Render a grouped column chart comparing monthly donations (green)
  * against monthly needs (red). Pledged amounts are shown as striped green bars.
  */
 export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
-	const margin = { left: 50, right: 5, top: 5, bottom: 20 }
+	const margin = { left: 50, right: 5, top: 5, bottom: 20 };
 
-	const container = document.querySelector(query) as HTMLElement | null
-	if (!container) return
-	const width = container.clientWidth
-	const height = container.clientHeight
+	const container = document.querySelector(query) as HTMLElement | null;
+	if (!container) return;
+	const width = container.clientWidth;
+	const height = container.clientHeight;
 
-	const x0 = margin.left
-	const x1 = width - margin.right
-	const y0 = height - margin.bottom
-	const y1 = margin.top
+	const x0 = margin.left;
+	const x1 = width - margin.right;
+	const y0 = height - margin.bottom;
+	const y1 = margin.top;
 
-	const baseFontSize = Math.max(8, Math.min(10, width / 80)) + 'px'
-	const axisFontSize = Math.max(10, Math.min(14, width / 57)) + 'px'
+	const baseFontSize = Math.max(8, Math.min(10, width / 80)) + 'px';
+	const axisFontSize = Math.max(10, Math.min(14, width / 57)) + 'px';
 
 	const svg = d3
 		.create('svg')
 		.attr('viewBox', [0, 0, width, height])
 		.style('font-family', 'sans-serif')
-		.style('font-size', baseFontSize)
+		.style('font-size', baseFontSize);
 
 	// Diagonal stripe pattern for pledged amounts
 	svg.append('pattern')
@@ -38,32 +38,32 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.append('rect')
 		.attr('height', 10)
 		.attr('width', 3)
-		.attr('fill', colorGreen)
+		.attr('fill', colorGreen);
 
 	const x = d3.scaleBand(
 		data.map((d) => d.index),
 		[x0, x1]
-	)
+	);
 
 	svg.append('g')
 		.style('font-size', axisFontSize)
 		.attr('transform', `translate(0,${y0})`)
 		.call(d3.axisBottom(x).tickSize(0).tickFormat(indexToLabel))
 		.selectAll('text')
-		.attr('transform', 'translate(0,5)')
+		.attr('transform', 'translate(0,5)');
 
-	const maxY = d3.max(data, (d) => Math.max(d.donated, d.needed)) ?? 0
+	const maxY = d3.max(data, (d) => Math.max(d.donated, d.needed)) ?? 0;
 	const y = d3
 		.scaleLinear()
 		.domain([0, maxY * 1.1])
-		.range([y0, y1])
+		.range([y0, y1]);
 
 	svg.append('g')
 		.style('font-size', axisFontSize)
 		.attr('transform', `translate(${x0},0)`)
-		.call(d3.axisLeft(y).tickFormat(formatCurrency).ticks(5))
+		.call(d3.axisLeft(y).tickFormat(formatCurrency).ticks(5));
 
-	const b = x.bandwidth()
+	const b = x.bandwidth();
 
 	// Needed (red, behind)
 	svg.selectAll('needed')
@@ -76,7 +76,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('height', (d) => y(0) - y(d.needed))
 		.attr('fill', colorRed)
 		.attr('stroke', colorRed)
-		.attr('stroke-width', 1)
+		.attr('stroke-width', 1);
 
 	// Received (solid green)
 	svg.selectAll('received')
@@ -89,7 +89,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('height', (d) => y(0) - y(d.received))
 		.attr('fill', colorGreen)
 		.attr('stroke', colorGreen)
-		.attr('stroke-width', 1)
+		.attr('stroke-width', 1);
 
 	// Pledged (striped green, stacked on top of received)
 	svg.selectAll('pledged')
@@ -102,7 +102,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('height', (d) => y(0) - y(d.pledged))
 		.attr('fill', 'url(#pattern_pledged)')
 		.attr('stroke', colorGreen)
-		.attr('stroke-width', 1)
+		.attr('stroke-width', 1);
 
-	container.append(svg.node()!)
+	container.append(svg.node()!);
 }
