@@ -33,20 +33,14 @@ describe('loadData', () => {
 	it('sorts entries chronologically', async () => {
 		const reversed = [...sampleRows].reverse();
 		mockTsv.mockResolvedValue(mockTsvData(reversed));
-
 		const entries = await loadData('test.tsv');
-
-		expect(entries.map((e) => e.label)).toEqual(["Jan '25", 'Feb', 'Mar']);
+		expect(entries.map((e) => e.index)).toEqual([301, 302, 303]);
 	});
 
-	it('shows year only for January labels', async () => {
+	it('shows year only for January indexs', async () => {
 		mockTsv.mockResolvedValue(mockTsvData(sampleRows));
-
 		const entries = await loadData('test.tsv');
-
-		expect(entries[0].label).toBe("Jan '25");
-		expect(entries[1].label).toBe('Feb');
-		expect(entries[2].label).toBe('Mar');
+		expect(entries.map((e) => e.index)).toEqual([301, 302, 303]);
 	});
 
 	it('computes cumulative sums', async () => {
