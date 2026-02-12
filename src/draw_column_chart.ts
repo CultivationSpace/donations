@@ -7,7 +7,7 @@ import { indexToLabel, colorGreen, colorRed, formatCurrency } from './utils'
  * against monthly needs (red). Pledged amounts are shown as striped green bars.
  */
 export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
-	const margin = { left: 60, right: 10, top: 20, bottom: 30 }
+	const margin = { left: 50, right: 5, top: 5, bottom: 20 }
 
 	const container = document.querySelector(query) as HTMLElement | null
 	if (!container) return

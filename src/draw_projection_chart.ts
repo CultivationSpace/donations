@@ -7,7 +7,7 @@ import { indexToLabel, colorDarkGreen, colorGreen, colorRed, formatCurrency } fr
  * and projected donations (dashed green). Annotates year-end shortfall if projected < needed.
  */
 export function drawProjectionChart(query: string, data: ProcessedEntry[]): void {
-	const margin = { left: 70, right: 10, top: 20, bottom: 30 }
+	const margin = { left: 55, right: 10, top: 5, bottom: 20 }
 
 	const container = document.querySelector(query) as HTMLElement | null
 	if (!container) return
