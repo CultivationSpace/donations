@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 /** Processed donation data for a single month, enriched with cumulative sums and projections. */
 export interface ProcessedEntry {
 	index: number;
+	year: number;
 	donated: number;
 	pledged: number;
 	received: number;
@@ -13,7 +14,39 @@ export interface ProcessedEntry {
 	sumProjectedDonations?: number;
 }
 
-/** Load a TSV file and return processed entries with cumulative sums and trend projections. */
+/** Calculate cumulative sums and trend projections for a set of entries. */
+export function processEntries(entries: ProcessedEntry[]): ProcessedEntry[] {
+	const result = entries.map((e) => ({ ...e, sumDonated: 0, sumNeeded: 0, sumProjectedDonations: undefined as number | undefined }));
+
+	// Calculate cumulative sums
+	let sumDonated = 0;
+	let sumNeeded = 0;
+	result.forEach((entry) => {
+		entry.sumDonated = sumDonated += entry.donated;
+		entry.sumNeeded = sumNeeded += entry.needed;
+	});
+
+	// Project year-end donations based on the trend of the last 3 months with donations
+	const lastThreeMonths = result.filter((e) => e.hasDonation).slice(-3);
+	if (lastThreeMonths.length > 0) {
+		const avgDonated =
+			lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length;
+		const avgSumDonated =
+			lastThreeMonths.reduce((acc, e) => acc + e.sumDonated, 0) / lastThreeMonths.length;
+		const avgIndex = lastThreeMonths.reduce((acc, e) => acc + e.index, 0) / lastThreeMonths.length;
+
+		const projectionStart = lastThreeMonths[0].index;
+		result.forEach((entry) => {
+			if (entry.index >= projectionStart) {
+				entry.sumProjectedDonations = avgSumDonated + avgDonated * (entry.index - avgIndex);
+			}
+		});
+	}
+
+	return result;
+}
+
+/** Load a TSV file and return parsed entries sorted chronologically. */
 export async function loadData(file: string): Promise<ProcessedEntry[]> {
 	let data: d3.DSVRowArray<string>;
 	try {
@@ -36,6 +69,7 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 
 		return {
 			index,
+			year,
 			donated,
 			needed,
 			pledged,
@@ -47,29 +81,6 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 	});
 
 	entries.sort((a, b) => a.index - b.index);
-
-	// Calculate cumulative sums
-	let sumDonated = 0;
-	let sumNeeded = 0;
-	entries.forEach((entry) => {
-		entry.sumDonated = sumDonated += entry.donated;
-		entry.sumNeeded = sumNeeded += entry.needed;
-	});
-
-	// Project year-end donations based on the trend of the last 3 months with donations
-	const lastThreeMonths = entries.filter((e) => e.hasDonation).slice(-3);
-	const avgDonated =
-		lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length;
-	const avgSumDonated =
-		lastThreeMonths.reduce((acc, e) => acc + e.sumDonated, 0) / lastThreeMonths.length;
-	const avgIndex = lastThreeMonths.reduce((acc, e) => acc + e.index, 0) / lastThreeMonths.length;
-
-	const projectionStart = lastThreeMonths[0].index;
-	entries.forEach((entry) => {
-		if (entry.index >= projectionStart) {
-			entry.sumProjectedDonations = avgSumDonated + avgDonated * (entry.index - avgIndex);
-		}
-	});
 
 	return entries;
 }
