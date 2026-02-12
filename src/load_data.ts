@@ -16,7 +16,12 @@ export interface ProcessedEntry {
 
 /** Calculate cumulative sums and trend projections for a set of entries. */
 export function processEntries(entries: ProcessedEntry[]): ProcessedEntry[] {
-	const result = entries.map((e) => ({ ...e, sumDonated: 0, sumNeeded: 0, sumProjectedDonations: undefined as number | undefined }));
+	const result = entries.map((e) => ({
+		...e,
+		sumDonated: 0,
+		sumNeeded: 0,
+		sumProjectedDonations: undefined as number | undefined,
+	}));
 
 	// Calculate cumulative sums
 	let sumDonated = 0;
@@ -33,7 +38,8 @@ export function processEntries(entries: ProcessedEntry[]): ProcessedEntry[] {
 			lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length;
 		const avgSumDonated =
 			lastThreeMonths.reduce((acc, e) => acc + e.sumDonated, 0) / lastThreeMonths.length;
-		const avgIndex = lastThreeMonths.reduce((acc, e) => acc + e.index, 0) / lastThreeMonths.length;
+		const avgIndex =
+			lastThreeMonths.reduce((acc, e) => acc + e.index, 0) / lastThreeMonths.length;
 
 		const projectionStart = lastThreeMonths[0].index;
 		result.forEach((entry) => {
