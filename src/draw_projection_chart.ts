@@ -11,6 +11,8 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 
 	const container = document.querySelector(query) as HTMLElement | null;
 	if (!container) return;
+	container.innerHTML = ''; // Clear previous chart if any
+
 	const width = container.clientWidth;
 	const height = container.clientHeight;
 
