@@ -16,5 +16,9 @@ export default defineConfig({
 	},
 	test: {
 		root: '.',
+		coverage: {
+			include: ['src/**/*.ts'],
+			all: true,
+		},
 	},
 })
