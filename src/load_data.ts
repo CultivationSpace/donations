@@ -3,7 +3,6 @@ import * as d3 from 'd3';
 /** Processed donation data for a single month, enriched with cumulative sums and projections. */
 export interface ProcessedEntry {
 	index: number;
-	donors: number;
 	donated: number;
 	pledged: number;
 	received: number;
@@ -30,7 +29,6 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		const month = parseInt(date[1], 10);
 
 		const index = (year - 2000) * 12 + month;
-		const donors = parseInt(entry.donors as string, 10);
 		const needed = parseFloat(entry.needed as string);
 		const pledged = parseFloat(entry.pledged as string);
 		const received = parseFloat(entry.received as string);
@@ -38,7 +36,6 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 
 		return {
 			index,
-			donors,
 			donated,
 			needed,
 			pledged,

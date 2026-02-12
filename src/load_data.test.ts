@@ -59,9 +59,9 @@ describe('loadData', () => {
 
 	it('sets hasDonation based on received or pledged', async () => {
 		const rows = [
-			{ month: '2025-01', donors: '0', needed: '1000', pledged: '0', received: '0' },
-			{ month: '2025-02', donors: '1', needed: '1000', pledged: '0', received: '100' },
-			{ month: '2025-03', donors: '1', needed: '1000', pledged: '50', received: '0' },
+			{ month: '2025-01', needed: '1000', pledged: '0', received: '0' },
+			{ month: '2025-02', needed: '1000', pledged: '0', received: '100' },
+			{ month: '2025-03', needed: '1000', pledged: '50', received: '0' },
 		];
 		mockTsv.mockResolvedValue(mockTsvData(rows));
 
