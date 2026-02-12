@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { monthLabels } from './utils';
 
 /** Processed donation data for a single month, enriched with cumulative sums and projections. */
 export interface ProcessedEntry {
