@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatCurrency, monthLabels } from './utils';
+import { formatCurrency, indexToLabel, monthLabels } from './utils';
 
 describe('monthLabels', () => {
 	it('has 12 entries', () => {
@@ -38,5 +38,26 @@ describe('formatCurrency', () => {
 
 	it('formats negative numbers', () => {
 		expect(formatCurrency(-5000)).toBe("-5'000 €");
+	});
+});
+
+describe('indexToLabel', () => {
+	it('maps index to correct month label', () => {
+		expect([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(indexToLabel)).toStrictEqual([
+			'Dec',
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+			'Jan',
+		]);
 	});
 });
