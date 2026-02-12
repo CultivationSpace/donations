@@ -71,6 +71,34 @@
 				height: auto;
 			}
 
+			#year_selector {
+				display: flex;
+				justify-content: center;
+				gap: 0.5rem;
+				margin-bottom: 2rem;
+			}
+
+			#year_selector button {
+				padding: 0.4rem 1.2rem;
+				border: 2px solid #109786;
+				border-radius: 0.3rem;
+				background: transparent;
+				color: #109786;
+				font-size: 1rem;
+				font-weight: 600;
+				cursor: pointer;
+				transition: background 0.15s, color 0.15s;
+			}
+
+			#year_selector button.active {
+				background: #109786;
+				color: #fff;
+			}
+
+			#year_selector button:hover:not(.active) {
+				background: #e0f7f4;
+			}
+
 			@media (max-width: 450px) {
 				header,
 				main {
@@ -97,6 +125,8 @@
 		</header>
 		<main>
 			<h1>Donation Dashboard</h1>
+
+			<div id="year_selector"></div>
 
 			<section aria-labelledby="total-donations-heading">
 				<h2 id="total-donations-heading">Monthly Donations vs. Expenses</h2>
