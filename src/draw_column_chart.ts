@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { ProcessedEntry } from './load_data'
-import { colorGreen, colorRed, formatCurrency } from './utils'
+import { indexToLabel, colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
  * Render a grouped column chart comparing monthly donations (green)
@@ -40,15 +40,15 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.attr('width', 3)
 		.attr('fill', colorGreen)
 
-	const x = d3
-		.scaleBand()
-		.domain(data.map((d) => d.label))
-		.range([x0, x1])
+	const x = d3.scaleBand(
+		data.map((d) => d.index),
+		[x0, x1]
+	)
 
 	svg.append('g')
 		.style('font-size', `${axisFontSize}px`)
 		.attr('transform', `translate(0,${y0})`)
-		.call(d3.axisBottom(x).tickSize(0))
+		.call(d3.axisBottom(x).tickSize(0).tickFormat(indexToLabel))
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
@@ -70,7 +70,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => (x(d.label) ?? 0) + b * 0.25)
+		.attr('x', (d) => (x(d.index) ?? 0) + b * 0.25)
 		.attr('y', (d) => y(d.needed))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.needed))
@@ -83,7 +83,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => (x(d.label) ?? 0) + b * 0.15)
+		.attr('x', (d) => (x(d.index) ?? 0) + b * 0.15)
 		.attr('y', (d) => y(d.received))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.received))
@@ -96,7 +96,7 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.data(data)
 		.enter()
 		.append('rect')
-		.attr('x', (d) => (x(d.label) ?? 0) + b * 0.15)
+		.attr('x', (d) => (x(d.index) ?? 0) + b * 0.15)
 		.attr('y', (d) => y(d.pledged + d.received))
 		.attr('width', b * 0.6)
 		.attr('height', (d) => y(0) - y(d.pledged))

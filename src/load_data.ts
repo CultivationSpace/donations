@@ -3,8 +3,7 @@ import { monthLabels } from './utils'
 
 /** Processed donation data for a single month, enriched with cumulative sums and projections. */
 export interface ProcessedEntry {
-	label: string
-	column: number
+	index: number
 	donors: number
 	donated: number
 	pledged: number
@@ -31,9 +30,7 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		const year = parseInt(date[0], 10)
 		const month = parseInt(date[1], 10)
 
-		const monthLabel = monthLabels[month - 1] ?? month
-		const label = month === 1 ? `${monthLabel} '${String(year).slice(2)}` : `${monthLabel}`
-		const column = year * 12 + month
+		const index = (year - 2000) * 12 + month
 		const donors = parseInt(entry.donors as string, 10)
 		const needed = parseFloat(entry.needed as string)
 		const pledged = parseFloat(entry.pledged as string)
@@ -41,8 +38,7 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		const donated = pledged + received
 
 		return {
-			label,
-			column,
+			index,
 			donors,
 			donated,
 			needed,
@@ -54,7 +50,7 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		}
 	})
 
-	entries.sort((a, b) => a.column - b.column)
+	entries.sort((a, b) => a.index - b.index)
 
 	// Calculate cumulative sums
 	let sumDonated = 0
@@ -70,12 +66,12 @@ export async function loadData(file: string): Promise<ProcessedEntry[]> {
 		lastThreeMonths.reduce((acc, e) => acc + e.donated, 0) / lastThreeMonths.length
 	const avgSumDonated =
 		lastThreeMonths.reduce((acc, e) => acc + e.sumDonated, 0) / lastThreeMonths.length
-	const avgColumn = lastThreeMonths.reduce((acc, e) => acc + e.column, 0) / lastThreeMonths.length
+	const avgIndex = lastThreeMonths.reduce((acc, e) => acc + e.index, 0) / lastThreeMonths.length
 
-	const projectionStart = lastThreeMonths[0].column
+	const projectionStart = lastThreeMonths[0].index
 	entries.forEach((entry) => {
-		if (entry.column >= projectionStart) {
-			entry.sumProjectedDonations = avgSumDonated + avgDonated * (entry.column - avgColumn)
+		if (entry.index >= projectionStart) {
+			entry.sumProjectedDonations = avgSumDonated + avgDonated * (entry.index - avgIndex)
 		}
 	})
 

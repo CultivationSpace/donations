@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { ProcessedEntry } from './load_data'
-import { colorDarkGreen, colorGreen, colorRed, formatCurrency } from './utils'
+import { indexToLabel, colorDarkGreen, colorGreen, colorRed, formatCurrency } from './utils'
 
 /**
  * Render a cumulative line chart with three series: needs (red), actual donations (green),
@@ -28,15 +28,15 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 		.style('font-family', 'sans-serif')
 		.style('font-size', `${baseFontSize}px`)
 
-	const x = d3
-		.scaleBand()
-		.domain(data.map((d) => d.label))
-		.range([x0, x1])
+	const x = d3.scaleBand(
+		data.map((d) => d.index),
+		[x0, x1]
+	)
 
 	svg.append('g')
 		.style('font-size', `${axisFontSize}px`)
 		.attr('transform', `translate(0,${y0})`)
-		.call(d3.axisBottom(x).tickSize(0))
+		.call(d3.axisBottom(x).tickSize(0).tickFormat(indexToLabel))
 		.selectAll('text')
 		.attr('transform', 'translate(0,5)')
 
@@ -63,7 +63,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 			'd',
 			d3
 				.line<ProcessedEntry>()
-				.x((d) => (x(d.label) ?? 0) + b * 0.5)
+				.x((d) => (x(d.index) ?? 0) + b * 0.5)
 				.y((d) => y(d.sumNeeded))
 		)
 
@@ -77,7 +77,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 			'd',
 			d3
 				.line<ProcessedEntry>()
-				.x((d) => (x(d.label) ?? 0) + b * 0.5)
+				.x((d) => (x(d.index) ?? 0) + b * 0.5)
 				.y((d) => y(d.sumDonated))
 		)
 
@@ -92,7 +92,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 			'd',
 			d3
 				.line<ProcessedEntry>()
-				.x((d) => (x(d.label) ?? 0) + b * 0.5)
+				.x((d) => (x(d.index) ?? 0) + b * 0.5)
 				.y((d) => y(d.sumProjectedDonations!))
 		)
 
