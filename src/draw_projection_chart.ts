@@ -19,13 +19,14 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 	const y0 = height - margin.bottom
 	const y1 = margin.top
 
+	const baseFontSize = Math.max(8, Math.min(10, width / 80))
+	const axisFontSize = Math.max(10, Math.min(14, width / 57))
+
 	const svg = d3
 		.create('svg')
-		.attr('width', width)
-		.attr('height', height)
 		.attr('viewBox', [0, 0, width, height])
 		.style('font-family', 'sans-serif')
-		.style('font-size', '10px')
+		.style('font-size', `${baseFontSize}px`)
 
 	const x = d3
 		.scaleBand()
@@ -33,7 +34,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 		.range([x0, x1])
 
 	svg.append('g')
-		.style('font-size', '14px')
+		.style('font-size', `${axisFontSize}px`)
 		.attr('transform', `translate(0,${y0})`)
 		.call(d3.axisBottom(x).tickSize(0))
 		.selectAll('text')
@@ -46,7 +47,7 @@ export function drawProjectionChart(query: string, data: ProcessedEntry[]): void
 		.range([y0, y1])
 
 	svg.append('g')
-		.style('font-size', '14px')
+		.style('font-size', `${axisFontSize}px`)
 		.attr('transform', `translate(${x0},0)`)
 		.call(d3.axisLeft(y).tickFormat(formatCurrency).ticks(5))
 
