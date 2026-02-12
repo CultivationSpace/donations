@@ -5,7 +5,7 @@
     "build": "vite build",
     "check": "npm run format && npm run lint && npm run test",
     "dev": "vite dev",
-    "format": "prettier --write src/*.ts web/*.html",
+    "format": "prettier --write .",
     "lint": "eslint src/",
     "preview": "vite preview",
     "test": "vitest run",
@@ -27,7 +27,7 @@
     "printWidth": 100,
     "tabWidth": 3,
     "useTabs": true,
-    "semi": false
+    "semi": true
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
