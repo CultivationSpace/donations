@@ -27,16 +27,17 @@ export function drawColumnChart(query: string, data: ProcessedEntry[]): void {
 		.style('font-family', 'sans-serif')
 		.style('font-size', '10px');
 
+	const stripWidth = Math.max(2, Math.min(5, Math.round(width / 200)));
 	// Diagonal stripe pattern for pledged amounts
 	svg.append('pattern')
 		.attr('id', 'pattern_pledged')
 		.attr('patternUnits', 'userSpaceOnUse')
-		.attr('width', 5)
-		.attr('height', 5)
+		.attr('width', stripWidth)
+		.attr('height', stripWidth)
 		.attr('patternTransform', 'rotate(45)')
 		.append('rect')
-		.attr('height', 10)
-		.attr('width', 3)
+		.attr('height', 30)
+		.attr('width', stripWidth / 2)
 		.attr('fill', colorGreen);
 
 	const x = d3.scaleBand(
