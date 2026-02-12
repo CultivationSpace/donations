@@ -61,7 +61,6 @@ The donation data lives in [`web/donations.tsv`](web/donations.tsv), a tab-separ
 | Column     | Description                             | Example   |
 | ---------- | --------------------------------------- | --------- |
 | `month`    | Year and month (`YYYY-MM`)              | `2026-02` |
-| `donors`   | Number of new donors                    | `3`       |
 | `received` | Amount received (€)                     | `1200.00` |
 | `pledged`  | Amount pledged but not yet received (€) | `150.00`  |
 | `needed`   | Monthly expenses (€)                    | `1487.49` |
